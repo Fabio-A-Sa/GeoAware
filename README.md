@@ -184,4 +184,4 @@ It only processes emails that I personally receive.
 
 # License
 
-MIT
+MIT License

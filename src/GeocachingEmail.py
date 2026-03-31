@@ -1,16 +1,20 @@
 from bs4 import BeautifulSoup
 from email.header import decode_header
 import base64
+import re
 
 class GeocachingEmail:
 
-    def __init__(self, raw_msg):
+    def __init__(self, raw_msg, config):
         self.id = raw_msg["id"]
         self.raw_msg = raw_msg
+        self.config = config
 
-        self.sender = ""
+        self.sender_name = ""
+        self.sender_email = ""
         self.subject = ""
         self.body = ""
+        self.type = None
 
         self.geocacher_name = None
         self.profile_link = None
@@ -18,6 +22,7 @@ class GeocachingEmail:
 
         self._parse_email()
         self._extract_geocaching_info()
+        self._extract_type()
 
     def _decode_mime(self, value):
         if not value:
@@ -44,7 +49,15 @@ class GeocachingEmail:
         headers = self.raw_msg["payload"].get("headers", [])
         for h in headers:
             if h["name"] == "From":
-                self.sender = self._decode_mime(h["value"])
+                decoded = self._decode_mime(h["value"])
+                # Split into name and email
+                match = re.match(r'(.*)<(.+@.+)>', decoded)
+                if match:
+                    self.sender_name = match.group(1).strip().strip('"')
+                    self.sender_email = match.group(2).strip()
+                else:
+                    self.sender_name = decoded
+                    self.sender_email = ""
             elif h["name"] == "Subject":
                 self.subject = self._decode_mime(h["value"])
         self.body = self._get_body(self.raw_msg["payload"])
@@ -65,18 +78,39 @@ class GeocachingEmail:
                 self.message_text = txt.strip('"')
                 break
 
+    def _extract_type(self):
+
+        subject_lower = self.subject.lower()
+        sender_lower = self.sender_name.lower()
+
+        for label in self.config.get("labels", []):
+            label_sender = label.get("Sender", "").lower()
+            label_name = label.get("Name")
+            label_filter = label.get("Filter", "")
+
+            # Skip if sender does not match
+            if label_sender not in sender_lower:
+                continue
+
+            # Convert filter into regex
+            regex_pattern = re.escape(label_filter)
+            regex_pattern = regex_pattern.replace(r"\{random\}", r".+")
+            regex_pattern = regex_pattern.replace(r"\{geocacher\}", r".+")
+            regex_pattern = regex_pattern.lower()
+
+            # Check if subject matches filter pattern
+            if re.search(regex_pattern, subject_lower):
+                self.type = label_name
+                return
+
+        # Fallback if no match found
+        self.type = "Unknown"
+
     def print(self):
         print("----- EMAIL -----")
-        print(f"From: {self.sender}")
+        print(f"From: {self.sender_name} <{self.sender_email}>")
         print(f"Subject: {self.subject}")
+        print(f"Type: {self.type}")
         if self.geocacher_name:
             print(f"Geocacher: {self.geocacher_name}")
-        if self.profile_link:
-            print(f"Profile: {self.profile_link}")
-        if self.message_text:
-            print("\nMessage:")
-            print(self.message_text)
-        else:
-            print("\nBody:")
-            print(self.body[:500])
         print("-----------------\n")

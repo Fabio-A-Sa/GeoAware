@@ -45,6 +45,6 @@ class EmailClient:
                 format="full"
             ).execute()
 
-            emails.append(GeocachingEmail(full_msg))
+            emails.append(GeocachingEmail(full_msg, self.config))
 
         return emails

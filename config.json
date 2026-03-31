@@ -1,7 +1,7 @@
 {
     "labels": [
-        { "Sender": "Geocaching", "Name": "Message Center", "Filter": "Geocaching: FabioSaGeo, you have a new message from {geocacher}"},
-        { "Sender": "Geocaching", "Name": "Email", "Filter": "[GEO] {geocacher} contacting FabioSaGeo from Geocaching.com"},
+        { "Sender": "Geocaching", "Name": "Message Center", "Filter": "Geocaching: FabioSaGeo, you have a new message from {random}"},
+        { "Sender": "Geocaching", "Name": "Email", "Filter": "[GEO] {random} contacting FabioSaGeo from Geocaching.com"},
         { "Sender": "Geocaching", "Name": "New Geocache", "Filter": "New {random}: {random}"},
         { "Sender": "Geocaching", "Name": "WatchList", "Filter": "[LOG] Watchlist: {random}"},
         { "Sender": "Geocaching", "Name": "Owner", "Filter": "[LOG] Owner: {random}"},

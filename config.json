@@ -4,49 +4,104 @@
       "Sender": "Geocaching", 
       "Name": "Message Center", 
       "Filter": "Geocaching: FabioSaGeo, you have a new message from {random}",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#1E90FF" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#AECBFA" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "Email", 
       "Filter": "[GEO] {random} contacting FabioSaGeo from Geocaching.com",
-      "Color": { "textColor": "#000000", "backgroundColor": "#FFD700" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#FBBC04" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "New Geocache", 
       "Filter": "New {random}: {random}",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#32CD32" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#CCFF90" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "WatchList", 
       "Filter": "[LOG] Watchlist: {random}",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#FF8C00" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#FFF475" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "Owner", 
       "Filter": "[LOG] Owner: {random}",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#DC143C" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#F28B82" }
     },
     { 
       "Sender": "Geocaching Forums", 
       "Name": "Forum", 
       "Filter": "{random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#87CEEB" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#D7AEFB" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "Pocket Queries", 
       "Filter": "Geocaching: Your Pocket Query, {random}, is now available.",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#8A2BE2" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#CBF0F8" }
     },
     { 
       "Sender": "Geocaching", 
       "Name": "Adventure Review", 
       "Filter": "ADVENTURE REVIEW: {random} left a review for {random}",
-      "Color": { "textColor": "#FFFFFF", "backgroundColor": "#FF4500" }
+      "Color": { "textColor": "#000000", "backgroundColor": "#A7FFEB" }
     }
+  ],
+  "earthcaches": [
+    "GC7K8W0", 
+    "GC7P5QK",
+    "GC7NZZA",
+    "GC7P8TF",
+    "GC7QJVC",
+    "GC7RYPP",
+    "GC7TFFB",
+    "GC7TFFD",
+    "GC70M7F",
+    "GC6NECM",
+    "GC7RCM5",
+    "GC6T14J",
+    "GC8737Z",
+    "GC6NG2Q",
+    "GC6MEJ4",
+    "GC6MEJN",
+    "GC6MEK9",
+    "GC6T3HF",
+    "GC7RNHC",
+    "GC8B1C1",
+    "GC8B24X",
+    "GC8B24Z",
+    "GC8B1BZ",
+    "GC8B256",
+    "GC8CKYG",
+    "GC8WD0C",
+    "GC7Q0N5",
+    "GC8VP7C",
+    "GC8GFY4",
+    "GC8B25H", 
+    "GC8B24R", 
+    "GC94EHD", 
+    "GC9XGEC", 
+    "GC9Y0WW", 
+    "GC9Y0XR", 
+    "GC9Z9WB", 
+    "GCAQZN9", 
+    "GCAQZNE", 
+    "GCB4Y10", 
+    "GCB4XVN",
+    "GCB4XWK",
+    "GCB50DM",
+    "GCBADT2",
+    "GCBBKXM",
+    "GCBBQZ9",
+    "GCBE093",
+    "GCBE044",
+    "GCBDZT0", 
+    "GCBDMP1", 
+    "GCBGAAY", 
+    "GCBGANV", 
+    "GCBGAGA",
+    "GCBHZE3"
   ]
 }

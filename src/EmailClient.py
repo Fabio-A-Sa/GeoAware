@@ -121,3 +121,58 @@ class EmailClient:
                 id=email.id,
                 body=body
             ).execute()
+
+    def move(self, emails, target_label_name, remove_from_inbox=True):
+
+        # TODO: move(emails, from, to, boolean func) seems better
+
+        if not emails:
+            return
+
+        # Get or create the target label
+        target_label_id = self.get_or_create_label(target_label_name)
+
+        for email in emails:
+            labels_to_add = [target_label_id]
+            labels_to_remove = ["INBOX"] if remove_from_inbox else []
+
+            self.service.users().messages().modify(
+                userId="me",
+                id=email.id,
+                body={
+                    "addLabelIds": labels_to_add,
+                    "removeLabelIds": labels_to_remove
+                }
+            ).execute()
+
+    def get_emails_from_label(self, label_name, max_results=10):
+
+        # Find the label config
+        label_config = next((l for l in self.config["labels"] if l["Name"] == label_name), None)
+        if not label_config:
+            raise ValueError(f"Label '{label_name}' not found in config")
+
+        # Get or create Gmail label
+        # TODO: fix bug in label colors label_config.get("Color")
+        label_id = self.get_or_create_label(label_name)
+
+        # Fetch messages from this label
+        results = self.service.users().messages().list(
+            userId="me",
+            labelIds=[label_id],
+            maxResults=max_results
+        ).execute()
+
+        messages = results.get("messages", [])
+        emails = []
+
+        for msg in messages:
+            full_msg = self.service.users().messages().get(
+                userId="me",
+                id=msg["id"],
+                format="full"
+            ).execute()
+
+            emails.append(GeocachingEmail(full_msg, self.config))
+
+        return emails

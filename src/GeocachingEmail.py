@@ -15,6 +15,7 @@ class GeocachingEmail:
         self.subject = ""
         self.body = ""
         self.type = None
+        self.earthcache = None
 
         self.geocacher_name = None
         self.profile_link = None
@@ -106,6 +107,21 @@ class GeocachingEmail:
         # Fallback if no match found
         self.type = "Unknown"
 
+    def isFromEarthcache(self):
+        if self.type != "Message Center":
+            return False
+
+        earthcaches = self.config.get("earthcaches", [])
+        if not self.message_text:
+            return False
+
+        for code in earthcaches:
+            if code in self.message_text:
+                self.earthcache = code
+                return True
+
+        return False
+    
     def print(self):
         print("----- EMAIL -----")
         print(f"From: {self.sender_name} <{self.sender_email}>")

@@ -24,12 +24,22 @@ def main():
         token=token_data
     )
 
+    # Authentication
     client.authenticate()
-    emails = client.get_inbox_emails(100)
-    client.organize(emails, remove_from_inbox=True)
 
-    for email in emails:
-        email.print()
+    # Organize email inbox
+    # emails = client.get_inbox_emails(100)
+    # client.organize(emails, remove_from_inbox=True)
+
+    # Organize message center
+    messages = client.get_emails_from_label("Message Center")
+    earthcache_messages = []
+    for message in messages:
+        if message.isFromEarthcache():
+            earthcache_messages.append(message)
+            print(message.earthcache)
+
+    client.move(earthcache_messages, "Earthcaches")
 
 if __name__ == "__main__":
     main()

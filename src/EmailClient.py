@@ -48,3 +48,76 @@ class EmailClient:
             emails.append(GeocachingEmail(full_msg, self.config))
 
         return emails
+    
+    def get_or_create_label(self, label_name, label_color=None):
+        # List existing labels
+        labels = self.service.users().labels().list(userId="me").execute().get("labels", [])
+
+        # Check if label already exists
+        for label in labels:
+            if label["name"].lower() == label_name.lower():
+                label_id = label["id"]
+                # Update color if provided
+                if label_color:
+                    # Fetch full label object
+                    full_label = self.service.users().labels().get(userId="me", id=label_id).execute()
+                    # Update color in full label body
+                    full_label["color"] = {
+                        "textColor": label_color.get("textColor", "#000000"),
+                        "backgroundColor": label_color.get("backgroundColor", "#FFFFFF")
+                    }
+                    # Send full label object to update
+                    self.service.users().labels().update(
+                        userId="me",
+                        id=label_id,
+                        body=full_label
+                    ).execute()
+                return label_id
+
+        # Create new label
+        label_body = {
+            "name": label_name,
+            "labelListVisibility": "labelShow",
+            "messageListVisibility": "show",
+            "type": "user"
+        }
+
+        new_label = self.service.users().labels().create(
+            userId="me",
+            body=label_body
+        ).execute()
+
+        # Update color if provided
+        if label_color:
+            full_label = self.service.users().labels().get(userId="me", id=new_label["id"]).execute()
+            full_label["color"] = {
+                "textColor": label_color.get("textColor", "#000000"),
+                "backgroundColor": label_color.get("backgroundColor", "#FFFFFF")
+            }
+            self.service.users().labels().update(
+                userId="me",
+                id=new_label["id"],
+                body=full_label
+            ).execute()
+
+        return new_label["id"]
+
+    def organize(self, emails, remove_from_inbox=False):
+        for email in emails:
+            if not email.type or email.type.lower() == "unknown":
+                continue  # Skip unknown types
+
+            # Get or create label for this email type
+            label_id = self.get_or_create_label(email.type)
+
+            # Prepare label modification body
+            body = {"addLabelIds": [label_id]}
+            if remove_from_inbox:
+                body["removeLabelIds"] = ["INBOX"]
+
+            # Apply label changes
+            self.service.users().messages().modify(
+                userId="me",
+                id=email.id,
+                body=body
+            ).execute()

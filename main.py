@@ -11,7 +11,7 @@ def load_json(path: str):
         return json.load(f)
 
 def main():
-    
+
     # Load all files
     config_data = load_json(CONFIG_PATH)
     credentials_data = load_json(CREDENTIALS_PATH)
@@ -25,7 +25,8 @@ def main():
     )
 
     client.authenticate()
-    emails = client.get_inbox_emails(10)
+    emails = client.get_inbox_emails(100)
+    client.organize(emails, remove_from_inbox=True)
 
     for email in emails:
         email.print()

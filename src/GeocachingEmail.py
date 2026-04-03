@@ -22,8 +22,8 @@ class GeocachingEmail:
         self.message_text = None
 
         self._parse_email()
-        self._extract_geocaching_info()
         self._extract_type()
+        self._extract_geocaching_info()
 
     def _decode_mime(self, value):
         if not value:
@@ -64,6 +64,13 @@ class GeocachingEmail:
         self.body = self._get_body(self.raw_msg["payload"])
 
     def _extract_geocaching_info(self):
+
+        if self.type == "Message Center":
+            if "from " in self.subject:
+                self.geocacher_name = self.subject.rpartition("from ")[2].strip("!").strip()
+
+        a = self.isFromEarthcache()
+
         soup = BeautifulSoup(self.body, "html.parser")
 
         profile_link_tag = soup.find("a", href=lambda h: h and "coord.info/PR" in h)
@@ -111,14 +118,19 @@ class GeocachingEmail:
     def isFromEarthcache(self):
         if self.type != "Message Center":
             return False
+        
+        print("Checkitext...")
 
         earthcaches = self.config.get("earthcaches", [])
         if not self.message_text:
             return False
+        
+        print("Checking for Earthcache codes in message text...")
 
-        for code in earthcaches:
+        for code in [cache["gc"] for cache in earthcaches]:
             if code in self.message_text:
                 self.earthcache = code
+                print("Checkisldmaslkdamsldmtext...")
                 return True
 
         return False

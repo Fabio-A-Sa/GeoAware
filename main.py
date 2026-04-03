@@ -43,5 +43,8 @@ def main():
     # for email in emails:
     #     print(email.message_text, end="\n\n")
 
+    emails = client.get_emails_from_label("Earthcaches", max_results=1)
+    client.reply(emails, send=False)
+
 if __name__ == "__main__":
     main()

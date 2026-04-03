@@ -2,6 +2,7 @@ import base64
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from .GeocachingEmail import GeocachingEmail
+from email.message import EmailMessage
 
 class EmailClient:
 
@@ -209,3 +210,90 @@ class EmailClient:
                     }
                 ).execute()
                 print(f"Email {email_obj.id} movido para {target_label_name}")
+
+    def _create_reply_message(self, email_obj):
+
+        if email_obj.type == "Message Center":
+            return f"""Olá {email_obj.geocacher_name},
+                
+Obrigado pela visita à cache {email_obj.earthcache}!
+\nEspero que tenhas gostado da experiência e aprendido algo novo sobre geologia.
+
+Cumprimentos,
+\nFábio             
+        """
+        
+        else:
+            return f"""Olá {email_obj.geocacher_name},
+                
+Obrigado pela mensagem! Este é um email de teste enviado pelo bot GeoAware.
+
+Cumprimentos,
+Fábio             
+            """
+
+    def reply(self, emails, send=False):
+        """
+        Sends a reply or creates a draft for a list of GeocachingEmail objects.
+        """
+        if not isinstance(emails, list):
+            emails = [emails]
+
+        for email_obj in emails:
+            try:
+
+                message = self._create_reply_message(email_obj)
+
+                # 1. Create the email message container (MIME)
+                mime_msg = EmailMessage()
+                mime_msg.set_content(message)
+
+                # 2. Set Recipient (The sender of the original email)
+                mime_msg['To'] = email_obj.sender_email
+                
+                # 3. Handle Subject (Ensure it starts with Re:)
+                subject = email_obj.subject
+                if not subject or not subject.lower().startswith("re:"):
+                    subject = f"Re: {subject or 'Geocaching Message'}"
+                mime_msg['Subject'] = subject
+
+                # 4. Threading Headers (In-Reply-To and References)
+                orig_headers = email_obj.raw_msg.get('payload', {}).get('headers', [])
+                msg_id = next((h['value'] for h in orig_headers if h['name'].lower() == 'message-id'), None)
+
+                if msg_id:
+                    mime_msg['In-Reply-To'] = msg_id
+                    mime_msg['References'] = msg_id
+
+                # 5. Get ThreadId to keep the conversation grouped in Gmail
+                thread_id = email_obj.raw_msg.get('threadId')
+
+                # 6. Encode the message to base64
+                encoded_message = base64.urlsafe_b64encode(mime_msg.as_bytes()).decode()
+                
+                if send:
+                    # --- SEND EMAIL ---
+                    self.service.users().messages().send(
+                        userId="me", 
+                        body={
+                            'raw': encoded_message, 
+                            'threadId': thread_id
+                        }
+                    ).execute()
+                    print(f"✅ Reply sent to {email_obj.sender_email}")
+                else:
+                    # --- CREATE DRAFT ---
+                    # Drafts require the 'raw' data inside a 'message' key
+                    self.service.users().drafts().create(
+                        userId="me",
+                        body={
+                            'message': {
+                                'raw': encoded_message,
+                                'threadId': thread_id
+                            }
+                        }
+                    ).execute()
+                    print(f"📝 Draft created for {email_obj.sender_email} (Thread: {thread_id})")
+
+            except Exception as e:
+                print(f"❌ Error processing email {email_obj.id}: {e}")

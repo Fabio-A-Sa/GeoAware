@@ -1,10 +1,7 @@
 import base64
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 from .GeocachingEmail import GeocachingEmail
-from email.header import decode_header
 
 class EmailClient:
 
@@ -124,8 +121,6 @@ class EmailClient:
 
     def move(self, emails, target_label_name, remove_from_inbox=True):
 
-        # TODO: move(emails, from, to, boolean func) seems better
-
         if not emails:
             return
 
@@ -176,3 +171,41 @@ class EmailClient:
             emails.append(GeocachingEmail(full_msg, self.config))
 
         return emails
+    
+    def reorganize_by_condition(self, source_labels, target_label_name, condition_func, max_results=20):
+        source_label_ids = []
+        for name in source_labels:
+            source_label_ids.append(self.get_or_create_label(name))
+        
+        target_label_id = self.get_or_create_label(target_label_name)
+
+        query = " OR ".join([f'label:"{name}"' for name in source_labels])
+        
+        results = self.service.users().messages().list(
+            userId="me",
+            q=query,
+            maxResults=max_results
+        ).execute()
+
+        messages = results.get("messages", [])
+        
+        for msg in messages:
+            full_msg = self.service.users().messages().get(
+                userId="me", id=msg["id"], format="full"
+            ).execute()
+            
+            email_obj = GeocachingEmail(full_msg, self.config)
+
+            if condition_func(email_obj):
+                current_labels = full_msg.get("labelIds", [])
+                labels_to_remove = [lid for lid in source_label_ids if lid in current_labels]
+
+                self.service.users().messages().modify(
+                    userId="me",
+                    id=email_obj.id,
+                    body={
+                        "addLabelIds": [target_label_id],
+                        "removeLabelIds": labels_to_remove
+                    }
+                ).execute()
+                print(f"Email {email_obj.id} movido para {target_label_name}")

@@ -66,18 +66,19 @@ class GeocachingEmail:
     def _extract_geocaching_info(self):
         soup = BeautifulSoup(self.body, "html.parser")
 
-        for a in soup.find_all("a"):
-            href = a.get("href", "")
-            if "geocaching.com/profile" in href:
-                self.profile_link = href
-                self.geocacher_name = a.text.replace("View", "").replace("’s profile", "").strip()
-                break
+        profile_link_tag = soup.find("a", href=lambda h: h and "coord.info/PR" in h)
+        if profile_link_tag:
+            self.profile_link = profile_link_tag.get("href")
 
-        for p in soup.find_all("p"):
-            txt = p.get_text("\n").strip()
-            if txt and len(txt) > 20:
-                self.message_text = txt.strip('"')
-                break
+        if self.type == 'Email':
+            # TODO - differentiate between new message and reply
+            return
+        else:
+            for p in soup.find_all("p"):
+                txt = p.get_text("\n").strip()
+                if txt and len(txt) > 20 and "This email was sent" not in txt:
+                    self.message_text = txt.strip('"')
+                    break
 
     def _extract_type(self):
 

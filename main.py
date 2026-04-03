@@ -28,18 +28,20 @@ def main():
     client.authenticate()
 
     # Organize email inbox
-    # emails = client.get_inbox_emails(100)
+    # emails = client.get_inbox_emails(10)
     # client.organize(emails, remove_from_inbox=True)
 
-    # Organize message center
-    messages = client.get_emails_from_label("Message Center")
-    earthcache_messages = []
-    for message in messages:
-        if message.isFromEarthcache():
-            earthcache_messages.append(message)
-            print(message.earthcache)
+    # Extract earthcaches
+    # client.reorganize_by_condition(
+    #    source_labels=["Message Center", "Email"],
+    #    target_label_name="Earthcaches",
+    #    condition_func=lambda e: e.isFromEarthcache(),
+    #    max_results=100
+    #)
 
-    client.move(earthcache_messages, "Earthcaches")
+    # emails = client.get_emails_from_label("Email", max_results=1)
+    # for email in emails:
+    #     print(email.message_text, end="\n\n")
 
 if __name__ == "__main__":
     main()

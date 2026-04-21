@@ -1,58 +1,49 @@
 {
   "labels": [
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Message Center", 
-      "Filter": "Geocaching: FabioSaGeo, you have a new message from {random}!",
-      "Color": { "textColor": "#000000", "backgroundColor": "#AECBFA" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Message Center",
+      "Filter": "Geocaching: FabioSaGeo, you have a new message from {random}!"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Email", 
-      "Filter": "[GEO] {random} contacting FabioSaGeo from Geocaching.com",
-      "Color": { "textColor": "#000000", "backgroundColor": "#FBBC04" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Email",
+      "Filter": "[GEO] {random} contacting FabioSaGeo from Geocaching.com"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "New Geocache", 
-      "Filter": "New {random}: {random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#CCFF90" }
+    {
+      "Sender": "Geocaching",
+      "Name": "New Geocache",
+      "Filter": "New {random}: {random}"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "WatchList", 
-      "Filter": "[LOG] Watchlist: {random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#FFF475" }
+    {
+      "Sender": "Geocaching",
+      "Name": "WatchList",
+      "Filter": "[LOG] Watchlist: {random}"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Owner", 
-      "Filter": "[LOG] Owner: {random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#F28B82" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Owner",
+      "Filter": "[LOG] Owner: {random}"
     },
-    { 
-      "Sender": "Geocaching Forums", 
-      "Name": "Forum", 
-      "Filter": "{random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#D7AEFB" }
+    {
+      "Sender": "Geocaching Forums",
+      "Name": "Forum",
+      "Filter": "{random}"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Pocket Queries", 
-      "Filter": "Geocaching: Your Pocket Query, {random}, is now available.",
-      "Color": { "textColor": "#000000", "backgroundColor": "#CBF0F8" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Pocket Queries",
+      "Filter": "Geocaching: Your Pocket Query, {random}, is now available."
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Adventure Review", 
-      "Filter": "ADVENTURE REVIEW: {random} left a review for {random}",
-      "Color": { "textColor": "#000000", "backgroundColor": "#A7FFEB" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Adventure Review",
+      "Filter": "ADVENTURE REVIEW: {random} left a review for {random}"
     },
-    { 
-      "Sender": "Geocaching", 
-      "Name": "Earthcaches", 
-      "Filter": "A random thing to identify Earthcaches in messages",
-      "Color": { "textColor": "#000000", "backgroundColor": "#FBBC04" }
+    {
+      "Sender": "Geocaching",
+      "Name": "Earthcaches",
+      "Filter": "A random thing to identify Earthcaches in messages"
     }
   ],
   "earthcaches": [

@@ -47,56 +47,22 @@ class EmailClient:
 
         return emails
     
-    def get_or_create_label(self, label_name, label_color=None):
-        # List existing labels
+    def get_or_create_label(self, label_name):
         labels = self.service.users().labels().list(userId="me").execute().get("labels", [])
 
-        # Check if label already exists
         for label in labels:
             if label["name"].lower() == label_name.lower():
-                label_id = label["id"]
-                # Update color if provided
-                if label_color:
-                    # Fetch full label object
-                    full_label = self.service.users().labels().get(userId="me", id=label_id).execute()
-                    # Update color in full label body
-                    full_label["color"] = {
-                        "textColor": label_color.get("textColor", "#000000"),
-                        "backgroundColor": label_color.get("backgroundColor", "#FFFFFF")
-                    }
-                    # Send full label object to update
-                    self.service.users().labels().update(
-                        userId="me",
-                        id=label_id,
-                        body=full_label
-                    ).execute()
-                return label_id
-
-        # Create new label
-        label_body = {
-            "name": label_name,
-            "labelListVisibility": "labelShow",
-            "messageListVisibility": "show",
-            "type": "user"
-        }
+                return label["id"]
 
         new_label = self.service.users().labels().create(
             userId="me",
-            body=label_body
-        ).execute()
-
-        # Update color if provided
-        if label_color:
-            full_label = self.service.users().labels().get(userId="me", id=new_label["id"]).execute()
-            full_label["color"] = {
-                "textColor": label_color.get("textColor", "#000000"),
-                "backgroundColor": label_color.get("backgroundColor", "#FFFFFF")
+            body={
+                "name": label_name,
+                "labelListVisibility": "labelShow",
+                "messageListVisibility": "show",
+                "type": "user"
             }
-            self.service.users().labels().update(
-                userId="me",
-                id=new_label["id"],
-                body=full_label
-            ).execute()
+        ).execute()
 
         return new_label["id"]
 
@@ -148,8 +114,6 @@ class EmailClient:
         if not label_config:
             raise ValueError(f"Label '{label_name}' not found in config")
 
-        # Get or create Gmail label
-        # TODO: fix bug in label colors label_config.get("Color")
         label_id = self.get_or_create_label(label_name)
 
         # Fetch messages from this label

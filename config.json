@@ -86,13 +86,31 @@
       { "gc": "GCAQZN9", "name": "" },
       { "gc": "GCAQZNE", "name": "" },
       { "gc": "GCB4Y10", "name": "" },
-      { "gc": "GCB4XVN", "name": "" },
+      { "gc": "GCB4XVN", "name": "Rocks of the Coast",
+        "questions": [
+          { "id": 1, "question": "What type of rock forms the main outcrop?", "answer": "schist" },
+          { "id": 2, "question": "How many distinct sediment layers are visible?", "answer": "3", "tolerance": 1 },
+          { "id": 3, "question": "What is the approximate dip angle of the strata (degrees)?", "answer": "45", "tolerance": 15 }
+        ]
+      },
       { "gc": "GCB4XWK", "name": "" },
-      { "gc": "GCB50DM", "name": "" },
+      { "gc": "GCB50DM", "name": "Volcanic Ridge",
+        "questions": [
+          { "id": 1, "question": "What volcanic rock type is dominant?", "answer": "basalt" },
+          { "id": 2, "question": "Estimate the height of the main rock face (metres).", "answer": "8", "tolerance": 3 },
+          { "id": 3, "question": "Describe the texture of the rock surface.", "answer": "vesicular" }
+        ]
+      },
       { "gc": "GCBADT2", "name": "" },
       { "gc": "GCBBKXM", "name": "" },
       { "gc": "GCBBQZ9", "name": "" },
-      { "gc": "GCBE093", "name": "" },
+      { "gc": "GCBE093", "name": "Granite Tor",
+        "questions": [
+          { "id": 1, "question": "What mineral gives the rock its pink colour?", "answer": "feldspar" },
+          { "id": 2, "question": "What type of intrusive body formed this granite?", "answer": "batholith" },
+          { "id": 3, "question": "Approximate grain size (mm)?", "answer": "5", "tolerance": 3 }
+        ]
+      },
       { "gc": "GCBE044", "name": "" },
       { "gc": "GCBDZT0", "name": "" },
       { "gc": "GCBDMP1", "name": "" },

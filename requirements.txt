@@ -4,3 +4,4 @@ google-auth-oauthlib
 python-dotenv
 bs4
 flask
+langdetect

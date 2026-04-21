@@ -261,3 +261,49 @@ Fábio
 
             except Exception as e:
                 print(f"❌ Error processing email {email_obj.id}: {e}")
+
+    def send_reply(self, email_obj, text, send=False):
+        mime_msg = EmailMessage()
+        mime_msg.set_content(text)
+        mime_msg['To'] = email_obj.sender_email
+
+        subject = email_obj.subject or 'Geocaching Message'
+        if not subject.lower().startswith("re:"):
+            subject = f"Re: {subject}"
+        mime_msg['Subject'] = subject
+
+        orig_headers = email_obj.raw_msg.get('payload', {}).get('headers', [])
+        msg_id = next((h['value'] for h in orig_headers if h['name'].lower() == 'message-id'), None)
+        if msg_id:
+            mime_msg['In-Reply-To'] = msg_id
+            mime_msg['References'] = msg_id
+
+        thread_id = email_obj.raw_msg.get('threadId')
+        encoded = base64.urlsafe_b64encode(mime_msg.as_bytes()).decode()
+
+        if send:
+            self.service.users().messages().send(
+                userId="me",
+                body={'raw': encoded, 'threadId': thread_id}
+            ).execute()
+            print(f"✅ Reply sent to {email_obj.sender_email}")
+        else:
+            self.service.users().drafts().create(
+                userId="me",
+                body={'message': {'raw': encoded, 'threadId': thread_id}}
+            ).execute()
+            print(f"📝 Draft created for {email_obj.sender_email}")
+
+        earthcaches_label_id = self.get_or_create_label("Earthcaches")
+        self.service.users().messages().modify(
+            userId="me",
+            id=email_obj.id,
+            body={"removeLabelIds": [earthcaches_label_id]}
+        ).execute()
+
+    def trash_email(self, email_obj):
+        self.service.users().messages().trash(
+            userId="me",
+            id=email_obj.id
+        ).execute()
+        print(f"🗑️ Email {email_obj.id} moved to trash")

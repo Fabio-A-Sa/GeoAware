@@ -3,30 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoAware — Earthcache Messages</title>
+  <title>GeoAware — Messages</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #02874d;
+      --green-lt:   #e6f4ee;
+      --green-bd:   #b3ddc9;
+      --green-hov:  #00b265;
+      --red:        #d34627;
+      --red-lt:     #fdf0ed;
+      --red-hov:    #de745d;
+      --yellow:     #f4a400;
+      --yellow-lt:  #fef8e7;
+      --blue:       #3d76c5;
+      --text:       #4a4a4a;
+      --text-sub:   #9b9b9b;
+      --border:     #e4e4e4;
+      --bg:         #f5f5f5;
+      --white:      #fff;
+      --radius:     6px;
+    }
 
     body {
       font-family: "Noto Sans", Arial, Helvetica, sans-serif;
       font-size: 14px;
-      line-height: 1.3;
-      color: #4a4a4a;
-      background: #f5f5f5;
+      line-height: 1.4;
+      color: var(--text);
+      background: var(--bg);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ── HEADER ── */
+    /* ── HEADER ──────────────────────────────────── */
     .site-header {
-      background: #02874d;
+      background: var(--green);
       padding: 0 1.5rem;
-      height: 56px;
+      height: 54px;
       display: flex;
       align-items: center;
       gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15);
     }
 
     .site-header__logo {
@@ -34,415 +56,746 @@
       align-items: center;
       gap: 0.5rem;
       text-decoration: none;
-      color: #fff;
     }
 
-    .site-header__logo svg {
-      width: 32px;
-      height: 32px;
-      fill: #fff;
+    .site-header__logo svg { width: 30px; height: 30px; fill: #fff; }
+
+    .site-header__name { font-weight: 700; font-size: 1.05rem; color: #fff; }
+    .site-header__sep  { color: rgba(255,255,255,.45); margin: 0 0.1rem; }
+    .site-header__title { font-size: 0.875rem; color: rgba(255,255,255,.8); }
+    .site-header__right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+    .site-header__count { font-size: 0.8rem; color: rgba(255,255,255,.7); }
+
+    /* ── TOOLBAR ─────────────────────────────────── */
+    .toolbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
     }
 
-    .site-header__name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #fff;
-      letter-spacing: 0.01em;
-    }
+    .toolbar__group { display: flex; align-items: center; gap: 0.5rem; }
+    .toolbar__label { font-size: 0.8125rem; color: var(--text-sub); }
 
-    .site-header__title {
-      font-size: 0.875rem;
-      color: rgba(255,255,255,0.8);
-      margin-left: 0.25rem;
-    }
-
-    .site-header__count {
-      margin-left: auto;
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.7);
-    }
-
-    /* ── PAGE LAYOUT ── */
-    .page-wrapper {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
-    }
-
-    .page-heading {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #4a4a4a;
-      margin-bottom: 1.25rem;
-    }
-
-    /* ── EMPTY STATE ── */
-    .empty-state {
-      background: #fff;
-      border: 1px solid #e4e4e4;
+    .folder-select {
+      appearance: none;
+      background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239b9b9b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.6rem center;
+      border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 3rem;
-      text-align: center;
-      color: #9b9b9b;
+      padding: 0.35rem 2rem 0.35rem 0.6rem;
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      min-width: 160px;
+      transition: border-color .15s;
     }
 
-    /* ── EMAIL CARD ── */
-    .email-list {
+    .folder-select:focus { outline: none; border-color: var(--green); }
+
+    .toggle { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none; }
+    .toggle input { display: none; }
+
+    .toggle__track {
+      width: 38px; height: 20px;
+      background: var(--border);
+      border-radius: 999px;
+      position: relative;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .toggle__track::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 16px; height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+      transition: transform .2s;
+    }
+
+    .toggle input:checked + .toggle__track { background: var(--red); }
+    .toggle input:checked + .toggle__track::after { transform: translateX(18px); }
+    .toggle__text { font-size: 0.8125rem; font-weight: 700; }
+    .toggle input:checked ~ .toggle__text { color: var(--red); }
+
+    /* ── STATS BAR ───────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      background: var(--white);
+      padding: 0.75rem 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 0.15rem;
     }
+
+    .stat__value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
+    .stat__label { font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: .06em; }
+
+    .stat__value--green  { color: var(--green); }
+    .stat__value--yellow { color: var(--yellow); }
+    .stat__value--red    { color: var(--red); }
+    .stat__value--blue   { color: var(--blue); }
+
+    /* ── PAGE ────────────────────────────────────── */
+    .page-wrapper { max-width: 900px; margin: 0 auto; padding: 1.25rem 1rem; }
+
+    /* ── LOADING / EMPTY ─────────────────────────── */
+    .state-msg {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-sub);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 22px; height: 22px;
+      border: 2px solid var(--border);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin-bottom: .5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── CARD LIST ───────────────────────────────── */
+    .email-list { display: flex; flex-direction: column; }
 
     .email-card {
-      background: #fff;
-      border: 1px solid #e4e4e4;
+      background: var(--white);
+      border: 1px solid var(--border);
       border-top: none;
+      overflow: hidden;
+      transition: opacity .3s, max-height .35s ease-out;
     }
 
-    .email-card:first-child {
-      border-top: 1px solid #e4e4e4;
-      border-radius: 4px 4px 0 0;
+    .email-card:first-child { border-top: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; }
+    .email-card:last-child  { border-radius: 0 0 var(--radius) var(--radius); }
+    .email-card:only-child  { border-top: 1px solid var(--border); border-radius: var(--radius); }
+
+    .email-card.is-dismissing {
+      opacity: 0;
+      max-height: 0 !important;
+      border-width: 0;
+      pointer-events: none;
     }
 
-    .email-card:last-child {
-      border-radius: 0 0 4px 4px;
-    }
-
-    .email-card:only-child {
-      border-top: 1px solid #e4e4e4;
-      border-radius: 4px;
-    }
-
+    /* ── CARD HEADER ─────────────────────────────── */
     .email-card__header {
       padding: 0.875rem 1.25rem;
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      border-bottom: 1px solid #f0f0f0;
       cursor: pointer;
-      transition: background 0.1s;
+      transition: background .1s;
+      border-left: 3px solid transparent;
     }
 
-    .email-card__header:hover {
-      background: #fafafa;
-    }
+    .email-card__header:hover { background: #fafafa; }
+    .email-card.is-open .email-card__header { border-left-color: var(--green); }
 
     .avatar {
-      width: 36px;
-      height: 36px;
+      width: 38px; height: 38px;
       border-radius: 50%;
-      background: #02874d;
+      background: var(--green);
       color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.875rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem;
       flex-shrink: 0;
       text-transform: uppercase;
     }
 
-    .email-card__meta {
-      flex: 1;
-      min-width: 0;
+    .email-card__meta { flex: 1; min-width: 0; }
+
+    .email-card__top {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
     }
 
-    .email-card__geocacher {
-      font-weight: 700;
-      font-size: 0.9375rem;
-      color: #4a4a4a;
-    }
+    .email-card__geocacher { font-weight: 700; font-size: .9375rem; }
+
+    .email-card__date { font-size: .8rem; color: var(--text-sub); white-space: nowrap; }
 
     .email-card__preview {
-      font-size: 0.8125rem;
-      color: #9b9b9b;
+      font-size: .8125rem;
+      color: var(--text-sub);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-top: 0.15rem;
+      margin-top: .15rem;
+    }
+
+    /* Score ring */
+    .score-ring {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      position: relative;
+    }
+
+    .score-ring svg { width: 44px; height: 44px; transform: rotate(-90deg); }
+    .score-ring__bg  { fill: none; stroke: var(--border); stroke-width: 3; }
+    .score-ring__arc { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+
+    .score-ring__value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      font-weight: 700;
     }
 
     .gc-badge {
       flex-shrink: 0;
-      background: #e6f4ee;
-      color: #02874d;
-      font-size: 0.75rem;
+      background: var(--green-lt);
+      color: var(--green);
+      font-size: .75rem;
       font-weight: 700;
-      padding: 0.25rem 0.625rem;
+      padding: .2rem .6rem;
       border-radius: 40px;
-      border: 1px solid #b3ddc9;
-      letter-spacing: 0.03em;
+      border: 1px solid var(--green-bd);
+      letter-spacing: .03em;
     }
 
-    .gc-badge--unknown {
-      background: #f5f5f5;
-      color: #9b9b9b;
-      border-color: #e4e4e4;
-    }
+    .gc-badge--unknown { background: var(--bg); color: var(--text-sub); border-color: var(--border); }
 
-    .chevron {
-      flex-shrink: 0;
-      width: 16px;
-      height: 16px;
-      color: #9b9b9b;
-      transition: transform 0.2s;
-    }
+    .chevron { flex-shrink: 0; width: 15px; height: 15px; color: var(--text-sub); transition: transform .2s; }
+    .email-card.is-open .chevron { transform: rotate(180deg); }
 
-    .email-card.is-open .chevron {
-      transform: rotate(180deg);
-    }
-
-    /* ── CARD BODY (collapsible) ── */
-    .email-card__body {
+    /* ── CARD SECTIONS ───────────────────────────── */
+    .section {
       display: none;
+      border-top: 1px solid #f0f0f0;
       padding: 1rem 1.25rem;
-      border-bottom: 1px solid #f0f0f0;
     }
 
-    .email-card.is-open .email-card__body {
-      display: block;
-    }
+    .email-card.is-open .section { display: block; }
 
-    .body-label {
-      font-size: 0.6875rem;
+    .section__label {
+      font-size: .6875rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9b9b9b;
-      margin-bottom: 0.5rem;
+      letter-spacing: .08em;
+      color: var(--text-sub);
+      margin-bottom: .6rem;
     }
 
     .message-text {
-      font-size: 0.875rem;
-      line-height: 1.6;
-      color: #4a4a4a;
+      font-size: .875rem;
+      line-height: 1.65;
+      color: var(--text);
       white-space: pre-wrap;
       word-break: break-word;
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
     }
 
-    /* ── REPLY AREA ── */
-    .email-card__reply {
-      display: none;
-      padding: 1rem 1.25rem;
-    }
-
-    .email-card.is-open .email-card__reply {
+    /* ── SCORE BREAKDOWN ─────────────────────────── */
+    .score-summary {
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid #f5f5f5;
     }
 
+    .score-total { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .score-total__denom { font-size: 1rem; font-weight: 400; color: var(--text-sub); }
+    .score-bar-wrap { flex: 1; }
+    .score-bar-track { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .score-bar-fill  { height: 100%; border-radius: 999px; transition: width .6s ease; }
+
+    .q-list { display: flex; flex-direction: column; gap: .5rem; }
+
+    .q-row {
+      display: grid;
+      grid-template-columns: 1.5rem 1fr auto;
+      align-items: start;
+      gap: .5rem .75rem;
+      padding: .5rem .75rem;
+      border-radius: 4px;
+      background: var(--bg);
+    }
+
+    .q-status {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+
+    .q-status--correct { background: var(--green-lt); color: var(--green); }
+    .q-status--partial  { background: var(--yellow-lt); color: var(--yellow); }
+    .q-status--wrong    { background: var(--red-lt);    color: var(--red);    }
+
+    .q-text  { font-size: .8125rem; color: var(--text); }
+    .q-expected { font-size: .75rem; color: var(--text-sub); margin-top: .1rem; }
+    .q-expected span { font-style: italic; }
+
+    .q-pct { font-size: .75rem; font-weight: 700; white-space: nowrap; }
+
+    /* ── REPLY ───────────────────────────────────── */
     textarea {
       width: 100%;
-      min-height: 90px;
+      min-height: 88px;
       resize: vertical;
-      border: 1px solid #e4e4e4;
+      border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 0.625rem 0.75rem;
+      padding: .6rem .75rem;
       font-family: inherit;
-      font-size: 0.875rem;
-      color: #4a4a4a;
+      font-size: .875rem;
+      color: var(--text);
       outline: none;
-      transition: border-color 0.15s ease-out;
+      transition: border-color .15s;
+      background: var(--white);
     }
 
-    textarea:focus {
-      border-color: #02874d;
-    }
+    textarea:focus { border-color: var(--green); }
+    textarea::placeholder { color: var(--text-sub); }
 
-    textarea::placeholder {
-      color: #9b9b9b;
-    }
-
-    .reply-actions {
-      display: flex;
-      justify-content: flex-end;
-    }
+    .reply-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; margin-top: .75rem; }
+    .reply-error   { font-size: .8125rem; color: var(--red); flex: 1; display: none; }
 
     .btn-primary {
-      background: #02874d;
-      border: 1px solid #02874d;
+      background: var(--green);
+      border: 1px solid var(--green);
       color: #fff;
-      padding: 10px 20px;
+      padding: 9px 20px;
       min-width: 120px;
       border-radius: 4px;
       font-family: inherit;
-      font-size: 0.875rem;
+      font-size: .875rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+      transition: background .15s, border-color .15s;
     }
 
-    .btn-primary:hover {
-      background: #00b265;
-      border-color: #00b265;
+    .btn-primary:hover:not(:disabled) { background: var(--green-hov); border-color: var(--green-hov); }
+    .btn-primary:disabled { background: var(--text-sub); border-color: var(--text-sub); cursor: default; }
+
+    body.send-mode .btn-primary { background: var(--red); border-color: var(--red); }
+    body.send-mode .btn-primary:hover:not(:disabled) { background: var(--red-hov); border-color: var(--red-hov); }
+
+    .btn-trash {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+      flex-shrink: 0;
     }
 
-    /* ── PAGINATION ── */
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.375rem;
-      margin-top: 1.5rem;
-    }
+    .btn-trash:hover { border-color: var(--red); color: var(--red); background: var(--red-lt); }
+    .btn-trash:disabled { opacity: .4; cursor: default; }
+
+    /* ── PAGINATION ──────────────────────────────── */
+    .pagination { display: flex; align-items: center; justify-content: center; gap: .375rem; margin-top: 1.25rem; }
 
     .pagination__btn {
       background: transparent;
-      border: 1px solid #3d76c5;
-      color: #3d76c5;
-      padding: 6px 14px;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      padding: 5px 13px;
       border-radius: 40px;
       font-family: inherit;
-      font-size: 0.8125rem;
+      font-size: .8125rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease-out, color 0.15s ease-out;
+      transition: background .15s, color .15s;
     }
 
-    .pagination__btn:hover:not(:disabled) {
-      background: #3d76c5;
-      color: #fff;
-    }
-
-    .pagination__btn:disabled {
-      border-color: #e4e4e4;
-      color: #9b9b9b;
-      cursor: default;
-    }
+    .pagination__btn:hover:not(:disabled) { background: var(--blue); color: #fff; }
+    .pagination__btn:disabled { border-color: var(--border); color: var(--text-sub); cursor: default; }
 
     .pagination__page {
       background: transparent;
       border: 1px solid transparent;
-      color: #4a4a4a;
-      width: 32px;
-      height: 32px;
+      color: var(--text);
+      width: 30px; height: 30px;
       border-radius: 50%;
       font-family: inherit;
-      font-size: 0.8125rem;
+      font-size: .8125rem;
       cursor: pointer;
-      transition: background 0.1s;
+      transition: background .1s;
     }
 
-    .pagination__page:hover {
-      background: #e4e4e4;
-    }
+    .pagination__page:hover { background: var(--border); }
 
     .pagination__page.is-active {
-      background: #02874d;
+      background: var(--green);
       color: #fff;
-      border-color: #02874d;
+      border-color: var(--green);
       font-weight: 700;
     }
 
-    .pagination__info {
-      font-size: 0.8125rem;
-      color: #9b9b9b;
-      margin: 0 0.5rem;
-    }
+    .pagination__info { font-size: .8125rem; color: var(--text-sub); margin: 0 .5rem; }
   </style>
 </head>
 <body>
 
   <header class="site-header">
     <a class="site-header__logo" href="#">
-      <!-- Geocaching compass icon -->
       <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="32" r="30" fill="none" stroke="#fff" stroke-width="3"/>
         <polygon points="32,8 37,30 32,26 27,30" fill="#fff"/>
-        <polygon points="32,56 27,34 32,38 37,34" fill="rgba(255,255,255,0.45)"/>
+        <polygon points="32,56 27,34 32,38 37,34" fill="rgba(255,255,255,.4)"/>
         <circle cx="32" cy="32" r="4" fill="#fff"/>
       </svg>
       <span class="site-header__name">GeoAware</span>
-      <span class="site-header__title">/ Earthcache Messages</span>
+      <span class="site-header__sep">/</span>
+      <span class="site-header__title" id="headerTitle">Earthcache Messages</span>
     </a>
-    <span class="site-header__count" id="totalCount"></span>
+    <div class="site-header__right">
+      <span class="site-header__count" id="totalCount"></span>
+    </div>
   </header>
 
-  <div class="page-wrapper">
-    <div id="emailList" class="email-list">
-      {% if not emails %}
-        <div class="empty-state">No earthcache messages found.</div>
-      {% endif %}
-      {% for email in emails %}
-      <div class="email-card" data-index="{{ loop.index0 }}">
-        <div class="email-card__header" onclick="toggleCard(this.parentElement)">
-          <div class="avatar">{{ email.geocacher_name[0] if email.geocacher_name != 'Unknown' else '?' }}</div>
-          <div class="email-card__meta">
-            <div class="email-card__geocacher">{{ email.geocacher_name }}</div>
-            <div class="email-card__preview">{{ email.message[:80] }}…</div>
-          </div>
-          <span class="gc-badge {{ 'gc-badge--unknown' if email.gc_code == '—' else '' }}">
-            {{ email.gc_code }}
-          </span>
-          <svg class="chevron" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="email-card__body">
-          <div class="body-label">Message</div>
-          <div class="message-text">{{ email.message }}</div>
-        </div>
-        <div class="email-card__reply">
-          <textarea placeholder="Write a reply to {{ email.geocacher_name }}…"></textarea>
-          <div class="reply-actions">
-            <button class="btn-primary" type="button">Send Reply</button>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
+  <div class="toolbar">
+    <div class="toolbar__group">
+      <span class="toolbar__label">Folder:</span>
+      <select class="folder-select" id="folderSelect" onchange="changeFolder(this.value)">
+        {% for f in folders %}
+        <option value="{{ f }}" {% if f == initial_folder %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
     </div>
+    <div class="toolbar__group">
+      <span class="toolbar__label">Reply mode:</span>
+      <label class="toggle">
+        <input type="checkbox" id="sendToggle" onchange="onToggleChange(this)">
+        <span class="toggle__track"></span>
+        <span class="toggle__text" id="toggleLabel">Draft only</span>
+      </label>
+    </div>
+  </div>
 
+  <div class="stats-bar" id="statsBar"></div>
+
+  <div class="page-wrapper">
+    <div id="emailList" class="email-list"></div>
     <div class="pagination" id="pagination"></div>
   </div>
 
   <script>
     const PER_PAGE = 10;
-    const cards = Array.from(document.querySelectorAll('.email-card'));
-    const totalEl = document.getElementById('totalCount');
-    const paginationEl = document.getElementById('pagination');
+    let visibleCards = [];
     let currentPage = 1;
+    let sendMode = false;
 
-    totalEl.textContent = cards.length + ' message' + (cards.length !== 1 ? 's' : '');
+    const totalEl  = document.getElementById('totalCount');
+    const listEl   = document.getElementById('emailList');
+    const pageEl   = document.getElementById('pagination');
+    const titleEl  = document.getElementById('headerTitle');
+    const statsEl  = document.getElementById('statsBar');
 
+    /* ── UTILS ── */
+    function esc(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function scoreColor(v) {
+      if (v === null) return '#9b9b9b';
+      if (v >= 8)    return '#02874d';
+      if (v >= 5)    return '#f4a400';
+      return '#d34627';
+    }
+
+    /* ── STATS BAR ── */
+    function renderStats(emails) {
+      const scored = emails.filter(e => e.score !== null);
+      const avg = scored.length
+        ? (scored.reduce((s, e) => s + e.score.total, 0) / scored.length).toFixed(1)
+        : null;
+      const high = scored.filter(e => e.score.total >= 8).length;
+      const low  = scored.filter(e => e.score.total < 5).length;
+
+      statsEl.innerHTML = `
+        <div class="stat">
+          <div class="stat__value stat__value--blue">${emails.length}</div>
+          <div class="stat__label">Messages</div>
+        </div>
+        <div class="stat">
+          <div class="stat__value" style="color:${avg !== null ? scoreColor(parseFloat(avg)) : '#9b9b9b'}">${avg !== null ? avg + '/10' : '—'}</div>
+          <div class="stat__label">Avg. Score</div>
+        </div>
+        <div class="stat">
+          <div class="stat__value stat__value--green">${high}</div>
+          <div class="stat__label">High (≥ 8)</div>
+        </div>
+        <div class="stat">
+          <div class="stat__value stat__value--red">${low}</div>
+          <div class="stat__label">Needs Attention (&lt; 5)</div>
+        </div>`;
+    }
+
+    /* ── SCORE RING ── */
+    function buildScoreRing(score) {
+      if (!score) {
+        return `<div class="score-ring">
+          <svg viewBox="0 0 44 44">
+            <circle class="score-ring__bg" cx="22" cy="22" r="18"/>
+          </svg>
+          <div class="score-ring__value" style="color:#9b9b9b;font-size:.65rem">N/A</div>
+        </div>`;
+      }
+      const r = 18, c = 2 * Math.PI * r;
+      const fill = (score.total / 10) * c;
+      const color = scoreColor(score.total);
+      return `<div class="score-ring">
+        <svg viewBox="0 0 44 44">
+          <circle class="score-ring__bg" cx="22" cy="22" r="${r}"/>
+          <circle class="score-ring__arc" cx="22" cy="22" r="${r}"
+            stroke="${color}"
+            stroke-dasharray="${fill} ${c}"
+            stroke-dashoffset="0"/>
+        </svg>
+        <div class="score-ring__value" style="color:${color}">${score.total}</div>
+      </div>`;
+    }
+
+    /* ── SCORE SECTION ── */
+    function buildScoreSection(score) {
+      if (!score) return '';
+      const color = scoreColor(score.total);
+      const barW  = (score.total / 10 * 100).toFixed(1);
+
+      const rows = score.questions.map(q => {
+        const statusClass = `q-status--${q.label}`;
+        const icon = q.label === 'correct' ? '✓' : (q.label === 'partial' ? '~' : '✗');
+        const pct  = Math.round(q.score * 100);
+        return `<div class="q-row">
+          <div class="q-status ${statusClass}">${icon}</div>
+          <div>
+            <div class="q-text">${esc(q.question)}</div>
+            <div class="q-expected">Expected: <span>${esc(q.expected)}</span></div>
+          </div>
+          <div class="q-pct" style="color:${scoreColor(q.score * 10)}">${pct}%</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="section" data-section="score">
+        <div class="section__label">Answer Score</div>
+        <div class="score-summary">
+          <div class="score-total" style="color:${color}">${score.total}<span class="score-total__denom">/10</span></div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-track">
+              <div class="score-bar-fill" style="width:${barW}%;background:${color}"></div>
+            </div>
+          </div>
+        </div>
+        <div class="q-list">${rows}</div>
+      </div>`;
+    }
+
+    /* ── CARD BUILDER ── */
+    function buildCard(email) {
+      const initial = email.geocacher_name !== 'Unknown' ? esc(email.geocacher_name[0]) : '?';
+      const badgeClass = email.gc_code === '—' ? 'gc-badge gc-badge--unknown' : 'gc-badge';
+      const btnLabel = sendMode ? 'Send Reply' : 'Draft Reply';
+
+      const div = document.createElement('div');
+      div.className = 'email-card';
+      div.dataset.id = email.id;
+      div.innerHTML = `
+        <div class="email-card__header" onclick="toggleCard(this.parentElement)">
+          <div class="avatar">${initial}</div>
+          <div class="email-card__meta">
+            <div class="email-card__top">
+              <span class="email-card__geocacher">${esc(email.geocacher_name)}</span>
+              <span class="email-card__date">${esc(email.date)}</span>
+            </div>
+            <div class="email-card__preview">${esc(email.message.slice(0, 90))}…</div>
+          </div>
+          ${buildScoreRing(email.score)}
+          <span class="${badgeClass}">${esc(email.gc_code)}</span>
+          <svg class="chevron" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div class="section" data-section="message">
+          <div class="section__label">Message</div>
+          <div class="message-text">${esc(email.message)}</div>
+        </div>
+
+        ${buildScoreSection(email.score)}
+
+        <div class="section" data-section="reply">
+          <textarea>${esc(email.default_reply)}</textarea>
+          <div class="reply-actions">
+            <span class="reply-error"></span>
+            <button class="btn-trash" type="button" onclick="deleteEmail(this)" title="Delete">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4h12M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1M6 7v5M10 7v5M3 4l1 9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="btn-primary" type="button" onclick="submitReply(this)">${btnLabel}</button>
+          </div>
+        </div>`;
+      return div;
+    }
+
+    /* ── RENDER LIST ── */
+    function renderList(emails) {
+      listEl.innerHTML = '';
+      renderStats(emails);
+      if (!emails.length) {
+        listEl.innerHTML = '<div class="state-msg">No messages found.</div>';
+        visibleCards = [];
+        updateCount();
+        pageEl.innerHTML = '';
+        return;
+      }
+      visibleCards = emails.map(buildCard);
+      visibleCards.forEach(c => listEl.appendChild(c));
+      updateCount();
+      showPage(1);
+    }
+
+    function updateCount() {
+      totalEl.textContent = visibleCards.length + ' message' + (visibleCards.length !== 1 ? 's' : '');
+    }
+
+    /* ── FOLDER ── */
+    async function changeFolder(name) {
+      titleEl.textContent = name;
+      listEl.innerHTML = '<div class="state-msg"><div class="spinner"></div><br>Loading…</div>';
+      statsEl.innerHTML = '';
+      pageEl.innerHTML = '';
+      totalEl.textContent = '';
+      try {
+        const resp = await fetch('/folder/' + encodeURIComponent(name));
+        if (!resp.ok) throw new Error((await resp.json()).error || 'Error');
+        renderList(await resp.json());
+      } catch (e) {
+        listEl.innerHTML = `<div class="state-msg">Error: ${esc(e.message)}</div>`;
+      }
+    }
+
+    /* ── TOGGLE ── */
+    function onToggleChange(input) {
+      sendMode = input.checked;
+      document.body.classList.toggle('send-mode', sendMode);
+      document.getElementById('toggleLabel').textContent = sendMode ? 'Send immediately' : 'Draft only';
+      document.querySelectorAll('.btn-primary').forEach(b => {
+        b.textContent = sendMode ? 'Send Reply' : 'Draft Reply';
+      });
+    }
+
+    /* ── PAGINATION ── */
     function showPage(page) {
       currentPage = page;
-      const start = (page - 1) * PER_PAGE;
-      const end = start + PER_PAGE;
-      cards.forEach((card, i) => {
-        card.style.display = (i >= start && i < end) ? '' : 'none';
-        if (i < start || i >= end) card.classList.remove('is-open');
+      const start = (page - 1) * PER_PAGE, end = start + PER_PAGE;
+      visibleCards.forEach((c, i) => {
+        c.style.display = (i >= start && i < end) ? '' : 'none';
+        if (i < start || i >= end) c.classList.remove('is-open');
       });
       renderPagination();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderPagination() {
-      const total = cards.length;
-      const pages = Math.ceil(total / PER_PAGE);
-      if (pages <= 1) { paginationEl.innerHTML = ''; return; }
+      const total = visibleCards.length, pages = Math.ceil(total / PER_PAGE);
+      if (pages <= 1) { pageEl.innerHTML = ''; return; }
+      let h = `<button class="pagination__btn" onclick="showPage(${currentPage-1})" ${currentPage===1?'disabled':''}>&lsaquo; Prev</button>`;
+      for (let p = 1; p <= pages; p++)
+        h += `<button class="pagination__page ${p===currentPage?'is-active':''}" onclick="showPage(${p})">${p}</button>`;
+      h += `<button class="pagination__btn" onclick="showPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>Next &rsaquo;</button>`;
+      h += `<span class="pagination__info">${(currentPage-1)*PER_PAGE+1}–${Math.min(currentPage*PER_PAGE,total)} of ${total}</span>`;
+      pageEl.innerHTML = h;
+    }
 
-      let html = '';
-      html += `<button class="pagination__btn" onclick="showPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lsaquo; Prev</button>`;
+    function toggleCard(card) { card.classList.toggle('is-open'); }
 
-      for (let p = 1; p <= pages; p++) {
-        html += `<button class="pagination__page ${p === currentPage ? 'is-active' : ''}" onclick="showPage(${p})">${p}</button>`;
+    /* ── REPLY ── */
+    async function submitReply(btn) {
+      const card = btn.closest('.email-card');
+      const errorEl = card.querySelector('.reply-error');
+      btn.disabled = true;
+      btn.textContent = sendMode ? 'Sending…' : 'Saving draft…';
+      errorEl.style.display = 'none';
+      try {
+        const resp = await fetch(`/reply/${card.dataset.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: card.querySelector('textarea').value, send: sendMode })
+        });
+        if (!resp.ok) throw new Error((await resp.json()).error || 'Unknown error');
+        dismissCard(card);
+      } catch (e) {
+        errorEl.textContent = 'Error: ' + e.message;
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = sendMode ? 'Send Reply' : 'Draft Reply';
       }
-
-      html += `<button class="pagination__btn" onclick="showPage(${currentPage + 1})" ${currentPage === pages ? 'disabled' : ''}>Next &rsaquo;</button>`;
-      html += `<span class="pagination__info">${(currentPage - 1) * PER_PAGE + 1}–${Math.min(currentPage * PER_PAGE, total)} of ${total}</span>`;
-
-      paginationEl.innerHTML = html;
     }
 
-    function toggleCard(card) {
-      card.classList.toggle('is-open');
+    /* ── DELETE ── */
+    async function deleteEmail(btn) {
+      const card = btn.closest('.email-card');
+      const errorEl = card.querySelector('.reply-error');
+      btn.disabled = true;
+      errorEl.style.display = 'none';
+      try {
+        const resp = await fetch(`/delete/${card.dataset.id}`, { method: 'POST' });
+        if (!resp.ok) throw new Error((await resp.json()).error || 'Unknown error');
+        dismissCard(card);
+      } catch (e) {
+        errorEl.textContent = 'Error: ' + e.message;
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+      }
     }
 
-    showPage(1);
+    /* ── DISMISS ── */
+    function dismissCard(card) {
+      card.style.maxHeight = card.offsetHeight + 'px';
+      card.classList.remove('is-open');
+      requestAnimationFrame(() => {
+        card.classList.add('is-dismissing');
+        card.addEventListener('transitionend', () => {
+          card.remove();
+          visibleCards = visibleCards.filter(c => c !== card);
+          const pages = Math.ceil(visibleCards.length / PER_PAGE);
+          if (currentPage > pages) currentPage = Math.max(1, pages);
+          updateCount();
+          renderStats(visibleCards.map(() => ({score: null}))); // recompute from DOM is impractical; stats updated on next load
+          showPage(currentPage);
+        }, { once: true });
+      });
+    }
+
+    /* ── INIT ── */
+    renderList({{ initial_emails }});
   </script>
-
 </body>
 </html>

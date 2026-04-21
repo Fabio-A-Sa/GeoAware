@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from email.header import decode_header
+from datetime import datetime, timezone
 import base64
 import re
 
@@ -20,6 +21,9 @@ class GeocachingEmail:
         self.geocacher_name = None
         self.profile_link = None
         self.message_text = None
+        self.date = datetime.fromtimestamp(
+            int(raw_msg["internalDate"]) / 1000, tz=timezone.utc
+        )
 
         self._parse_email()
         self._extract_type()

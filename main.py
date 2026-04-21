@@ -39,7 +39,7 @@ def cmd_dashboard(args):
     client = build_client()
     emails = client.get_emails_from_label("Earthcaches", max_results=args.max_results)
     print(f"Fetched {len(emails)} email(s). Opening dashboard…")
-    run_dashboard(emails, port=args.port)
+    run_dashboard(emails, client=client, port=args.port)
 
 def main():
     parser = argparse.ArgumentParser(prog="geoaware")

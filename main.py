@@ -1,6 +1,7 @@
 import json
 import argparse
 from src.EmailClient import EmailClient
+from src.dashboard import run_dashboard
 
 CONFIG_PATH = "config.json"
 CREDENTIALS_PATH = "secrets/credentials.json"
@@ -34,6 +35,12 @@ def cmd_organize_earthcaches(args):
         max_results=args.max_results
     )
 
+def cmd_dashboard(args):
+    client = build_client()
+    emails = client.get_emails_from_label("Earthcaches", max_results=args.max_results)
+    print(f"Fetched {len(emails)} email(s). Opening dashboard…")
+    run_dashboard(emails, port=args.port)
+
 def main():
     parser = argparse.ArgumentParser(prog="geoaware")
     subparsers = parser.add_subparsers(dest="command")
@@ -48,6 +55,11 @@ def main():
     earthcaches_parser = organize_sub.add_parser("earthcaches", help="Label earthcache emails from Email and Message Center")
     earthcaches_parser.add_argument("--max-results", type=int, default=100)
     earthcaches_parser.set_defaults(func=cmd_organize_earthcaches)
+
+    dashboard_parser = subparsers.add_parser("dashboard", help="Open the Earthcaches email dashboard")
+    dashboard_parser.add_argument("--max-results", type=int, default=50)
+    dashboard_parser.add_argument("--port", type=int, default=5000)
+    dashboard_parser.set_defaults(func=cmd_dashboard)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

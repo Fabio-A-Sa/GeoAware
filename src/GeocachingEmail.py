@@ -69,23 +69,20 @@ class GeocachingEmail:
             if "from " in self.subject:
                 self.geocacher_name = self.subject.rpartition("from ")[2].strip("!").strip()
 
-        a = self.isFromEarthcache()
-
         soup = BeautifulSoup(self.body, "html.parser")
 
         profile_link_tag = soup.find("a", href=lambda h: h and "coord.info/PR" in h)
         if profile_link_tag:
             self.profile_link = profile_link_tag.get("href")
 
-        if self.type == 'Email':
-            # TODO - differentiate between new message and reply
-            return
-        else:
+        if self.type != 'Email':
             for p in soup.find_all("p"):
                 txt = p.get_text("\n").strip()
                 if txt and len(txt) > 20 and "This email was sent" not in txt:
                     self.message_text = txt.strip('"')
                     break
+
+        self.isFromEarthcache()
 
     def _extract_type(self):
 
@@ -116,21 +113,12 @@ class GeocachingEmail:
         self.type = "Unknown"
 
     def isFromEarthcache(self):
-        if self.type != "Message Center":
+        if self.type != "Message Center" or not self.message_text:
             return False
-        
-        print("Checkitext...")
 
-        earthcaches = self.config.get("earthcaches", [])
-        if not self.message_text:
-            return False
-        
-        print("Checking for Earthcache codes in message text...")
-
-        for code in [cache["gc"] for cache in earthcaches]:
+        for code in [cache["gc"] for cache in self.config.get("earthcaches", [])]:
             if code in self.message_text:
                 self.earthcache = code
-                print("Checkisldmaslkdamsldmtext...")
                 return True
 
         return False
